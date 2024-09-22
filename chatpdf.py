@@ -121,8 +121,11 @@ def main():
 
     if pdf_text:
         # Assume the first few lines contain the book title, adjust as necessary
-        book_title = pdf_text.split('\n', 1)[0]
-        st.write(f"**Judul Buku: {book_title}**")
+        # book_title = pdf_text.split('\n', 1)[0]
+        st.write(f"**Judul Buku: Ilmu Pengetahuan Alam \n Diterbitkan Oleh Pusat Perbukuan
+Badan Standar, Kurikulum, dan Asesmen Pendidikan
+Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi
+Komplek Kemdikbudristek Jalan RS. Fatmawati, Cipete, Jakarta Selatan https://buku.kemdikbud.go.id\n Disusun Oleh Okky Fajar Tri Maryana, dkk**")
     else:
         st.warning("Berkas PDF kosong atau tidak dapat diproses.")
 
