@@ -54,7 +54,6 @@ def load_and_process_pdf(pdf_path, limit=5):
 @st.cache_resource
 def load_faiss_index():
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-    # Set allow_dangerous_deserialization=True if the source is trusted
     return FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
 
 # Retrieve similar documents using FAISS vector store
@@ -64,7 +63,6 @@ def get_similar_docs(question):
 
 # Check if the response contains mathematical expressions or numbers
 def contains_math(response):
-    # Regular expression to match numbers, equations, or mathematical symbols
     math_pattern = r'[=+\-*/^(){}\[\]\\]|[0-9]'
     return re.search(math_pattern, response)
 
@@ -76,16 +74,16 @@ def format_response(response):
     else:
         st.write(response)  # Render normal content as text
 
-# Get conversational chain for Google Generative AI
+# Get conversational chain for Google Generative AI (with Chain of Thought)
 def get_conversational_chain():
     prompt_template = """
-    Answer the question as detailed as possible from the provided context. 
-    If the answer is not in the provided context, use the generative model from Gemini Pro. 
-    If the response contains a numerical result, formula, or equation, display it using LaTeX format 
-    and include a detailed explanation of the symbols and their meaning.\n\n
+    Answer the question by first breaking down your reasoning step by step (using the Chain of Thought approach). 
+    Explain your thought process before arriving at the final answer. 
+    If the question involves a numerical result, formula, or equation, display the reasoning using LaTeX format 
+    for mathematical expressions, and include a detailed explanation of each symbol and step in the equation.\n\n
     Context:\n {context}\n
     Question: \n{question}\n
-    Answer:
+    Step-by-step reasoning and answer:
     """
     
     # Create the LLM Chain
@@ -102,27 +100,22 @@ def get_conversational_chain():
 
 # Generate response based on FAISS or fallback to generative model
 def process_question(question):
-    # Search for relevant documents in FAISS index
     docs = get_similar_docs(question)
     
-    # If relevant documents are found, use the conversational chain
     if docs:
         chain = get_conversational_chain()
         response = chain.invoke({"input_documents": docs, "question": question})
         
-        # If the response contains the default prompt for no answer, fallback to generative model
         if "answer is not available in the context" in response['output_text']:
             return generate_fallback_response(question)
         else:
             return response['output_text']
     else:
-        # Fallback to using a generative model if no relevant document is found
         return generate_fallback_response(question)
 
 # Fallback response if no relevant document is found
 def generate_fallback_response(question):
-    # Use the free "chat-bison-001" model instead of "gemini-pro"
-    response = genai.generate_text(prompt=question, model="chat-bison-001")
+    response = genai.generate_text(prompt=question, model="gemini-pro")
     return response.result
 
 # Main app logic
@@ -130,27 +123,24 @@ def main():
     st.set_page_config(page_title="Chat PDF + Open Knowledge", layout="wide")
     st.header("Chat with PDF + Answer Beyond the Docs")
 
-    # Load and process PDF
     pdf_directory = os.path.join(os.path.dirname(__file__), "pdf_files")
     pdf_path = os.path.join(pdf_directory, "IPA-BS-KLS-VIII.pdf")
     
     pdf_text = load_and_process_pdf(pdf_path)
 
-    # Display the PDF text if it's not empty or None
     if pdf_text:
         st.write("**Processed PDF Text (Preview):**")
-        st.write(pdf_text[:500])  # Show the first 500 characters
+        st.write(pdf_text[:500])
     else:
         st.warning("The PDF file is empty or could not be processed.")
 
-    # Get user input (prompt)
     user_question = st.text_input("Ask a Question")
 
     if user_question:
         with st.spinner("Processing your request..."):
             answer = process_question(user_question)
             st.success("Response generated!")
-            format_response(answer)  # Automatically format response based on content type
+            format_response(answer)
 
 if __name__ == "__main__":
     main()
