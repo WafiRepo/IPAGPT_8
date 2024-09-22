@@ -1,5 +1,4 @@
 import os
-import re
 import streamlit as st
 from PyPDF2 import PdfReader
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
@@ -61,18 +60,15 @@ def get_similar_docs(question):
     db = load_faiss_index()
     return db.similarity_search(question)
 
-# Check if the response contains mathematical expressions or numbers
-def contains_math(response):
-    math_pattern = r'[=+\-*/^(){}\[\]\\]|[0-9]'
-    return re.search(math_pattern, response)
-
-# Automatically format response with LaTeX if mathematical content is found
+# Automatically format all responses with LaTeX if necessary
 def format_response(response):
-    if contains_math(response):
+    try:
+        # Assume LaTeX formatting is required and attempt to render with st.latex()
         st.latex(response)  # Render mathematical content as LaTeX
         st.write("Description: This equation represents the relationship between the variables shown.")
-    else:
-        st.write(response)  # Render normal content as text
+    except Exception:
+        # If LaTeX rendering fails, fallback to plain text
+        st.write(response)
 
 # Get conversational chain for Google Generative AI (with Chain of Thought)
 def get_conversational_chain():
@@ -140,7 +136,7 @@ def main():
         with st.spinner("Processing your request..."):
             answer = process_question(user_question)
             st.success("Response generated!")
-            format_response(answer)
+            format_response(answer)  # Automatically attempt LaTeX formatting for all responses
 
 if __name__ == "__main__":
     main()
