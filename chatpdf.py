@@ -2,7 +2,7 @@ import os
 import streamlit as st
 from PyPDF2 import PdfReader
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_community.vectorstores import FAISS  # Correct import for FAISS
+from langchain_community.vectorstores import FAISS  # Correct FAISS import
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
@@ -77,8 +77,8 @@ def get_conversational_chain():
     # Initialize the LLMChain with model and prompt
     llm_chain = LLMChain(llm=model, prompt=prompt)
 
-    # Use StuffDocumentsChain, and pass the LLMChain
-    chain = StuffDocumentsChain(llm_chain=llm_chain)
+    # Specify the document_variable_name explicitly
+    chain = StuffDocumentsChain(llm_chain=llm_chain, document_variable_name="context")
     
     return chain
 
