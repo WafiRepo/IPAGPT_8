@@ -23,13 +23,31 @@ genai.configure(api_key=api_key)
 @st.cache_data
 def load_and_process_pdf(pdf_path, limit=5):
     text = ""
-    with open(pdf_path, "rb") as f:
-        pdf_reader = PdfReader(f)
-        for i, page in enumerate(pdf_reader.pages):
-            if i >= limit:  # Limit to first 'limit' pages
-                break
-            text += page.extract_text()
+    try:
+        # Check if the file is empty before processing
+        if os.path.getsize(pdf_path) == 0:
+            st.error(f"The file {pdf_path} is empty.")
+            return None
+
+        with open(pdf_path, "rb") as f:
+            pdf_reader = PdfReader(f)
+            for i, page in enumerate(pdf_reader.pages):
+                if i >= limit:
+                    break
+                text += page.extract_text()
+
+    except FileNotFoundError:
+        st.error(f"File not found: {pdf_path}")
+        return None
+    except EmptyFileError:
+        st.error(f"Cannot read an empty file: {pdf_path}")
+        return None
+    except Exception as e:
+        st.error(f"An error occurred while reading the file: {e}")
+        return None
+
     return text
+
 
 # Cache FAISS index loading
 @st.cache_resource
