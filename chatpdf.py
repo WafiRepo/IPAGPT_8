@@ -121,8 +121,8 @@ def process_question(question):
 
 # Fallback response if no relevant document is found
 def generate_fallback_response(question):
-    # Using Google Generative AI directly to answer questions beyond the documents
-    response = genai.generate_text(prompt=question, model="gemini-pro")
+    # Use the free "chat-bison-001" model instead of "gemini-pro"
+    response = genai.generate_text(prompt=question, model="chat-bison-001")
     return response.result
 
 # Main app logic
