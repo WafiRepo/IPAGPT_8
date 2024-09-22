@@ -86,7 +86,6 @@ def get_conversational_chain():
     
     return chain
 
-
 # Generate response based on FAISS or fallback to generative model
 def process_question(question):
     docs = get_similar_docs(question)
@@ -114,6 +113,18 @@ def generate_fallback_response(question):
 # Main app logic
 def main():
     st.set_page_config(page_title="Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur", layout="wide")
+    
+    # Add logo at the center top
+    logo_path = "images/SMPN1BMT logo.jpeg"  # Replace with your actual path to the logo
+    st.markdown(
+        f"""
+        <div style="display: flex; justify-content: center;">
+            <img src="data:image/png;base64,{st.image(logo_path, use_column_width=True)}" style="width: 200px; height: auto;">
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
     st.header("Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur")
 
     pdf_directory = os.path.join(os.path.dirname(__file__), "pdf_files")
