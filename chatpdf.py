@@ -92,7 +92,12 @@ def process_question(question):
         chain = get_conversational_chain()
         # Replace __call__ with invoke
         response = chain.invoke({"input_documents": docs, "question": question})
-        return response['output_text']
+        
+        # If the response contains the default prompt for no answer, fallback to generative model
+        if "answer is not available in the context" in response['output_text']:
+            return generate_fallback_response(question)
+        else:
+            return response['output_text']
     else:
         # Fallback to using a generative model if no relevant document is found
         return generate_fallback_response(question)
@@ -102,7 +107,6 @@ def generate_fallback_response(question):
     # Using Google Generative AI directly to answer questions beyond the documents
     response = genai.generate_text(prompt=question, model="gemini-pro")
     return response.result
-
 # Main app logic
 def main():
     st.set_page_config(page_title="Chat PDF + Open Knowledge", layout="wide")
