@@ -107,6 +107,7 @@ def generate_fallback_response(question):
     # Using Google Generative AI directly to answer questions beyond the documents
     response = genai.generate_text(prompt=question, model="gemini-pro")
     return response.result
+
 # Main app logic
 def main():
     st.set_page_config(page_title="Chat PDF + Open Knowledge", layout="wide")
