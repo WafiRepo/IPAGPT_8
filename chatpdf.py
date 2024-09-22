@@ -28,7 +28,7 @@ def load_and_process_pdf(pdf_path, limit=5):
     try:
         # Check if the file is empty before processing
         if os.path.getsize(pdf_path) == 0:
-            st.error(f"The file {pdf_path} is empty.")
+            st.error(f"Berkas {pdf_path} kosong.")
             return None
 
         with open(pdf_path, "rb") as f:
@@ -39,13 +39,13 @@ def load_and_process_pdf(pdf_path, limit=5):
                 text += page.extract_text()
 
     except FileNotFoundError:
-        st.error(f"File not found: {pdf_path}")
+        st.error(f"Berkas tidak ditemukan: {pdf_path}")
         return None
     except PdfReadError:
-        st.error(f"Cannot read the PDF file. It may be corrupted: {pdf_path}")
+        st.error(f"Tidak dapat membaca berkas PDF. Mungkin berkas rusak: {pdf_path}")
         return None
     except Exception as e:
-        st.error(f"An error occurred: {e}")
+        st.error(f"Terjadi kesalahan: {e}")
         return None
 
     return text
@@ -68,13 +68,13 @@ def format_response(response):
 # Get conversational chain for Google Generative AI (with Chain of Thought)
 def get_conversational_chain():
     prompt_template = """
-    Answer the question by first breaking down your reasoning step by step (using the Chain of Thought approach). 
-    Explain your thought process before arriving at the final answer. 
-    If the question involves a numerical result, formula, or equation, explain each step and provide a detailed explanation 
-    of each symbol and step in the equation.\n\n
-    Context:\n {context}\n
-    Question: \n{question}\n
-    Step-by-step reasoning and answer:
+    Jawab pertanyaan dengan menjelaskan proses berpikir Anda langkah demi langkah (menggunakan pendekatan Chain of Thought). 
+    Jelaskan proses berpikir Anda sebelum sampai pada jawaban akhir. 
+    Jika pertanyaan melibatkan hasil numerik, rumus, atau persamaan, jelaskan setiap langkah dan berikan penjelasan terperinci 
+    tentang setiap simbol dan langkah dalam persamaan.\n\n
+    Konteks:\n {context}\n
+    Pertanyaan: \n{question}\n
+    Langkah-langkah dan jawaban:
     """
     
     # Create the LLM Chain
@@ -111,8 +111,8 @@ def generate_fallback_response(question):
 
 # Main app logic
 def main():
-    st.set_page_config(page_title="Chat PDF + Open Knowledge", layout="wide")
-    st.header("Chat with PDF + Answer Beyond the Docs")
+    st.set_page_config(page_title="Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur", layout="wide")
+    st.header("Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur")
 
     pdf_directory = os.path.join(os.path.dirname(__file__), "pdf_files")
     pdf_path = os.path.join(pdf_directory, "IPA-BS-KLS-VIII.pdf")
@@ -120,18 +120,19 @@ def main():
     pdf_text = load_and_process_pdf(pdf_path)
 
     if pdf_text:
-        st.write("**Processed PDF Text (Preview):**")
-        st.write(pdf_text[:500])
+        # Assume the first few lines contain the book title, adjust as necessary
+        book_title = pdf_text.split('\n', 1)[0]
+        st.write(f"**Judul Buku: {book_title}**")
     else:
-        st.warning("The PDF file is empty or could not be processed.")
+        st.warning("Berkas PDF kosong atau tidak dapat diproses.")
 
-    user_question = st.text_input("Ask a Question")
+    user_question = st.text_input("Ajukan Pertanyaan")
 
     if user_question:
-        with st.spinner("Processing your request..."):
+        with st.spinner("Sedang memproses permintaan Anda..."):
             answer = process_question(user_question)
-            st.success("Response generated!")
-            format_response(answer)  # Directly display response without LaTeX formatting
+            st.success("Respons berhasil dihasilkan!")
+            format_response(answer)
 
 if __name__ == "__main__":
     main()
