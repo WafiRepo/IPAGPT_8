@@ -115,7 +115,7 @@ def main():
     st.set_page_config(page_title="Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur", layout="wide")
     
     # Add logo at the center top and adjust its size
-    logo_path = "images/logo.png"  # Replace with your actual path to the logo
+    logo_path = "images/SMPN1BMT logo.jpeg"  # Replace with your actual path to the logo
     st.markdown(
         f"""
         <div style="display: flex; justify-content: center; margin-bottom: 20px;">
