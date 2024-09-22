@@ -63,8 +63,6 @@ def get_similar_docs(question):
 # Automatically format all responses with LaTeX if necessary
 def format_response(response):
     try:
-        # Assume LaTeX formatting is required and attempt to render with st.latex()
-        st.latex(response)  # Render mathematical content as LaTeX
         st.write("Description: This equation represents the relationship between the variables shown.")
     except Exception:
         # If LaTeX rendering fails, fallback to plain text
