@@ -65,8 +65,7 @@ def get_similar_docs(question):
 def get_conversational_chain():
     prompt_template = """
     Answer the question as detailed as possible from the provided context. 
-    If the answer is not in the provided context, just say, 'answer is not available in the context'.\n\n
-    Context:\n {context}\n
+    If the answer is not in the provided context, use generative model from gemini pro\n {context}\n
     Question: \n{question}\n
     Answer:
     """
