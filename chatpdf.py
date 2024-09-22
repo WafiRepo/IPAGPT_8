@@ -67,16 +67,16 @@ def format_response(response):
 # Get conversational chain for Google Generative AI (with Chain of Thought)
 def get_conversational_chain():
     prompt_template = """
-    Jawab pertanyaan dengan menjelaskan proses berpikir Anda langkah demi langkah (menggunakan pendekatan Chain of Thought). 
-    Jelaskan proses berpikir Anda sebelum sampai pada jawaban akhir. 
-    Jika pertanyaan melibatkan hasil numerik, rumus, atau persamaan, jelaskan setiap langkah dan berikan penjelasan terperinci 
-    tentang setiap simbol dan langkah dalam persamaan.\n\n
+    Jawab pertanyaan dengan cara yang mudah dipahami, seolah-olah Anda sedang berbicara kepada seorang teman. 
+    Jelaskan pengertian atau konsep yang ditanyakan dengan menggunakan bahasa yang sederhana, namun tetap lengkap. 
+    Jika pertanyaan melibatkan hasil numerik, rumus, atau persamaan, berikan penjelasan yang mudah dimengerti 
+    tanpa membagi jawaban dalam langkah-langkah yang terlalu formal. Berikan penjelasan yang alami dan singkat.\n\n
     Konteks:\n {context}\n
     Pertanyaan: \n{question}\n
-    Langkah-langkah dan jawaban:
+    Jawaban:
     """
     
-    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3)
+    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.6)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     
     llm_chain = LLMChain(llm=model, prompt=prompt)
