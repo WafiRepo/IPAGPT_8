@@ -8,6 +8,7 @@ from langchain.prompts import PromptTemplate
 from langchain.chains.question_answering import load_qa_chain
 from dotenv import load_dotenv
 from PyPDF2.errors import PdfReadError
+from langchain.chains import StuffDocumentsChain
 
 # Load environment variables
 load_dotenv()
