@@ -1,115 +1,122 @@
 import streamlit as st
 from PyPDF2 import PdfReader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 import os
+import concurrent.futures
+from dotenv import load_dotenv
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-import google.generativeai as genai
 from langchain.vectorstores import FAISS
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts import PromptTemplate
-from dotenv import load_dotenv
 
-# Load environment variables
+# Load environment variables from .env
 load_dotenv()
 api_key = os.getenv("GOOGLE_API_KEY")
 
 if not api_key:
     raise ValueError("GOOGLE_API_KEY is not set")
 
+# Configure Google Generative AI
+import google.generativeai as genai
 genai.configure(api_key=api_key)
 
-# Variabel global untuk menyimpan riwayat percakapan
-conversation_history = []
-
-# Fungsi untuk membaca teks dari PDF di direktori
-def get_pdf_text_from_directory(directory):
+# Cache PDF loading and processing to avoid reloading each time
+@st.cache_data
+def load_and_process_pdf(pdf_path, limit=5):
     text = ""
-    for filename in os.listdir(directory):
-        if filename.endswith(".pdf"):
-            filepath = os.path.join(directory, filename)
-            with open(filepath, "rb") as f:
-                pdf_reader = PdfReader(f)
-                for page in pdf_reader.pages:
-                    text += page.extract_text()
+    with open(pdf_path, "rb") as f:
+        pdf_reader = PdfReader(f)
+        for i, page in enumerate(pdf_reader.pages):
+            if i >= limit:  # Only process the first 'limit' pages for performance
+                break
+            text += page.extract_text()
     return text
 
-# Fungsi untuk memecah teks menjadi chunks
-def get_text_chunks(text):
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=10000, chunk_overlap=1000)
-    chunks = text_splitter.split_text(text)
-    return chunks
-
-# Fungsi untuk membuat vector store dari chunks teks
-def get_vector_store(text_chunks):
+# Cache FAISS index loading
+@st.cache_resource
+def load_faiss_index():
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-    vector_store = FAISS.from_texts(text_chunks, embedding=embeddings)
-    vector_store.save_local("faiss_index")
+    # Set allow_dangerous_deserialization to True, as you trust the source
+    return FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
 
-# Fungsi untuk mendapatkan model percakapan
+
+# Retrieve similar documents using FAISS vector store
+def get_similar_docs(question):
+    db = load_faiss_index()
+    return db.similarity_search(question)
+
+# Get conversational chain for Google Generative AI
 def get_conversational_chain():
     prompt_template = """
-    Answer the question as detailed as possible from the provided context, make sure to provide all the details. 
-    If the answer is not in the provided context just say, 'answer is not available in the context'. Do not provide the wrong answer.
-    \n\n
-    Conversation History: {history}\n\n
+    Answer the question as detailed as possible from the provided context. 
+    If the answer is not in the provided context, just say, 'answer is not available in the context'.\n\n
     Context:\n {context}\n
     Question: \n{question}\n
     Answer:
     """
-    
     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3)
-    prompt = PromptTemplate(template=prompt_template, input_variables=["history", "context", "question"])
+    prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
-
     return chain
 
-# Fungsi untuk memproses input pengguna
-def user_input(user_question):
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+# Process prompt and fetch response, with parallel processing
+def process_prompt_with_parallel(prompts):
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        results = list(executor.map(process_single_prompt, prompts))
+    return results
 
-    # Load FAISS index
-    new_db = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
-    docs = new_db.similarity_search(user_question)
-
-    # Gabungkan riwayat percakapan dengan pertanyaan pengguna
-    conversation_text = "\n".join(conversation_history)  # Menggabungkan riwayat prompt
-    
-    # Dapatkan chain percakapan
+# Function to handle single prompt
+def process_single_prompt(prompt):
+    similar_docs = get_similar_docs(prompt)
     chain = get_conversational_chain()
+    response = chain(
+        {"input_documents": similar_docs, "question": prompt},
+        return_only_outputs=True
+    )
+    return response['output_text']
 
-    # Proses pertanyaan dengan riwayat
-    response = chain({"input_documents": docs, "history": conversation_text, "question": user_question}, return_only_outputs=True)
+# Manage session state to cache conversation history
+if 'conversation_history' not in st.session_state:
+    st.session_state.conversation_history = []
 
-    # Simpan pertanyaan dan jawaban dalam riwayat
-    conversation_history.append(f"User: {user_question}")
-    conversation_history.append(f"Assistant: {response['output_text']}")
+# Add question and answer to session state
+def add_to_conversation(question, answer):
+    st.session_state.conversation_history.append({"question": question, "answer": answer})
 
-    st.write("Reply: ", response["output_text"])
+# Display conversation history in the app
+def display_conversation():
+    if st.session_state.conversation_history:
+        for idx, entry in enumerate(st.session_state.conversation_history):
+            st.write(f"**User {idx+1}:** {entry['question']}")
+            st.write(f"**Assistant {idx+1}:** {entry['answer']}")
 
-# Fungsi utama
+# Main app logic
 def main():
-    st.set_page_config(page_title="Chat PDF", layout="wide")
-    st.header("Chat with PDF using Gemini💁")
+    st.set_page_config(page_title="Optimized Chat PDF", layout="wide")
+    st.header("Chat with PDFs using Google Generative AI")
 
-    # Input pertanyaan dari pengguna
-    user_question = st.text_input("Ask a Question from the PDF Files")
+    # Load and process PDF once, and cache results
+    pdf_directory = os.path.join(os.path.dirname(__file__), "pdf_files")
+    pdf_text = load_and_process_pdf(os.path.join(pdf_directory, "IPA-BS-KLS-VIII.pdf"))
 
-    # Proses file PDF yang sudah ada di folder
-    directory = os.path.join(os.path.dirname(__file__), "pdf_files")
-    raw_text = get_pdf_text_from_directory(directory)
+    # Show part of the processed PDF text
+    st.write("**Processed PDF Text (Preview):**")
+    st.write(pdf_text[:500])  # Show the first 500 characters
 
-    # Proses PDF menjadi chunks
-    text_chunks = get_text_chunks(raw_text)
-    
-    # Membuat dan menyimpan vector store
-    get_vector_store(text_chunks)
+    # Get user input (prompt)
+    user_question = st.text_input("Ask a Question based on the PDF")
 
+    # Display conversation history
+    display_conversation()
+
+    # Handle user input and processing
     if user_question:
-        user_input(user_question)
+        with st.spinner("Processing your request..."):
+            answer = process_single_prompt(user_question)
+            add_to_conversation(user_question, answer)
 
-    st.sidebar.title("Conversation History:")
-    st.sidebar.write("\n".join(conversation_history))  # Menampilkan riwayat percakapan di sidebar
+        st.success("Response generated!")
+        st.write(f"**Assistant:** {answer}")
 
 if __name__ == "__main__":
     main()

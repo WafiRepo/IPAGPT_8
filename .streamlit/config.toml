@@ -1,0 +1,14 @@
+# .streamlit/config.toml
+
+[server]
+headless = true  # Default to true for Streamlit Cloud
+
+[theme]
+primaryColor = "#F63366"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F0F2F6"
+textColor = "#262730"
+
+# Define environment variables
+[general]
+GOOGLE_API_KEY = "AIzaSyBVEl3kaEAUlZXzYJeVJy2DqRLZy9CzqB0"
