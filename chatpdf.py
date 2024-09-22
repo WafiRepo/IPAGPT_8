@@ -107,11 +107,11 @@ def main():
     pdf_text = load_and_process_pdf(pdf_path)
 
     # Display the PDF text if it's not empty or None
-    if pdf_text:
-        st.write("**Processed PDF Text (Preview):**")
-        st.write(pdf_text[:500])  # Show the first 500 characters
-    else:
-        st.warning("The PDF file is empty or could not be processed.")
+    # if pdf_text:
+    #     st.write("**Processed PDF Text (Preview):**")
+    #     st.write(pdf_text[:500])  # Show the first 500 characters
+    # else:
+    #     st.warning("The PDF file is empty or could not be processed.")
 
     # Get user input (prompt)
     user_question = st.text_input("Ask a Question")
