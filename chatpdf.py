@@ -100,13 +100,18 @@ def main():
     st.set_page_config(page_title="Chat PDF + Open Knowledge", layout="wide")
     st.header("Chat with PDF + Answer Beyond the Docs")
 
-    # Load and process PDF once
+    # Load and process PDF
     pdf_directory = os.path.join(os.path.dirname(__file__), "pdf_files")
-    pdf_text = load_and_process_pdf(os.path.join(pdf_directory, "IPA-BS-KLS-VIII.pdf"))
+    pdf_path = os.path.join(pdf_directory, "IPA-BS-KLS-VIII.pdf")
+    
+    pdf_text = load_and_process_pdf(pdf_path)
 
-    # Display part of the processed PDF text
-    st.write("**Processed PDF Text (Preview):**")
-    st.write(pdf_text[:500])  # Show the first 500 characters
+    # Display the PDF text if it's not empty or None
+    if pdf_text:
+        st.write("**Processed PDF Text (Preview):**")
+        st.write(pdf_text[:500])  # Show the first 500 characters
+    else:
+        st.warning("The PDF file is empty or could not be processed.")
 
     # Get user input (prompt)
     user_question = st.text_input("Ask a Question")
