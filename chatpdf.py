@@ -71,6 +71,9 @@ def get_conversational_chain():
     Jelaskan proses berpikir Anda sebelum sampai pada jawaban akhir. 
     Jika pertanyaan melibatkan hasil numerik, rumus, atau persamaan, jelaskan setiap langkah dan berikan penjelasan terperinci 
     tentang setiap simbol dan langkah dalam persamaan.\n\n
+    Konteks:\n {context}\n
+    Pertanyaan: \n{question}\n
+    Langkah-langkah dan jawaban:
     """
     
     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3)
