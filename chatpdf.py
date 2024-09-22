@@ -65,7 +65,7 @@ def get_similar_docs(question):
 def get_conversational_chain():
     prompt_template = """
     Answer the question as detailed as possible from the provided context. 
-    If the answer is not in the provided context, use generative model from gemini pro. and if the response is numerical, formula, or equation use latex result format to display\n {context}\n
+    If the answer is not in the provided context, use generative model from gemini pro. and if the response is numerical, formula, or equation use latex result format to display, then use more description of the symbol's definition.\n {context}\n
     Question: \n{question}\n
     Answer:
     """
