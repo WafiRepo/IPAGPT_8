@@ -2,13 +2,13 @@ import os
 import streamlit as st
 from PyPDF2 import PdfReader
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_community.vectorstores import FAISS  # Updated FAISS import
+from langchain_community.vectorstores import FAISS  # Correct import for FAISS
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import PromptTemplate
-from langchain.chains.question_answering import load_qa_chain
+from langchain.chains import LLMChain
+from langchain.chains.combine_documents.stuff import StuffDocumentsChain
 from dotenv import load_dotenv
 from PyPDF2.errors import PdfReadError
-from langchain.chains import StuffDocumentsChain
 
 # Load environment variables
 load_dotenv()
@@ -56,13 +56,11 @@ def load_faiss_index():
     # Set allow_dangerous_deserialization=True if the source is trusted
     return FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
 
-
 # Retrieve similar documents using FAISS vector store
 def get_similar_docs(question):
     db = load_faiss_index()
     return db.similarity_search(question)
 
-# Get conversational chain for Google Generative AI
 # Get conversational chain for Google Generative AI
 def get_conversational_chain():
     prompt_template = """
@@ -72,11 +70,15 @@ def get_conversational_chain():
     Question: \n{question}\n
     Answer:
     """
+    # Create the LLM Chain
     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     
-    # Use StuffDocumentsChain instead of load_qa_chain
-    chain = StuffDocumentsChain(llm=model, prompt=prompt)
+    # Initialize the LLMChain with model and prompt
+    llm_chain = LLMChain(llm=model, prompt=prompt)
+
+    # Use StuffDocumentsChain, and pass the LLMChain
+    chain = StuffDocumentsChain(llm_chain=llm_chain)
     
     return chain
 
@@ -94,6 +96,7 @@ def process_question(question):
     else:
         # Fallback to using a generative model if no relevant document is found
         return generate_fallback_response(question)
+
 # Fallback response if no relevant document is found
 def generate_fallback_response(question):
     # Using Google Generative AI directly to answer questions beyond the documents
