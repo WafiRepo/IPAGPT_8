@@ -112,9 +112,8 @@ def generate_fallback_response(question):
 
 # Main app logic
 def main():
-    st.set_page_config(page_title="Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur", layout="wide")
-    
-    # Add logo at the center top
+
+        # Add logo at the center top
     logo_path = "images/SMPN1BMT logo.jpeg"  # Replace with your actual path to the logo
     st.markdown(
         f"""
@@ -124,6 +123,9 @@ def main():
         """,
         unsafe_allow_html=True
     )
+    st.set_page_config(page_title="Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur", layout="wide")
+    
+
 
     st.header("Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur")
 
@@ -133,7 +135,7 @@ def main():
     pdf_text = load_and_process_pdf(pdf_path)
 
     if pdf_text:
-        st.write(f"**Judul Buku: Ilmu Pengetahuan Alam**")
+        st.write(f"**Nama Kelas: Ilmu Pengetahuan Alam**")
         st.write(f"Diterbitkan Oleh Pusat Perbukuan\nBadan Standar, Kurikulum, dan Asesmen Pendidikan\n"
                  f"Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi\n"
                  f"Komplek Kemdikbudristek Jalan RS. Fatmawati, Cipete, Jakarta Selatan\n"
