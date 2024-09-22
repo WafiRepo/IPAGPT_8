@@ -7,6 +7,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import PromptTemplate
 from langchain.chains.question_answering import load_qa_chain
 from dotenv import load_dotenv
+from PyPDF2.errors import PdfReadError
 
 # Load environment variables
 load_dotenv()
@@ -39,21 +40,21 @@ def load_and_process_pdf(pdf_path, limit=5):
     except FileNotFoundError:
         st.error(f"File not found: {pdf_path}")
         return None
-    except EmptyFileError:
-        st.error(f"Cannot read an empty file: {pdf_path}")
+    except PdfReadError:
+        st.error(f"Cannot read the PDF file. It may be corrupted: {pdf_path}")
         return None
     except Exception as e:
-        st.error(f"An error occurred while reading the file: {e}")
+        st.error(f"An error occurred: {e}")
         return None
 
     return text
 
-
-# Cache FAISS index loading
 @st.cache_resource
 def load_faiss_index():
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-    return FAISS.load_local("faiss_index", embeddings)
+    # Set allow_dangerous_deserialization=True if the source is trusted
+    return FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
+
 
 # Retrieve similar documents using FAISS vector store
 def get_similar_docs(question):
