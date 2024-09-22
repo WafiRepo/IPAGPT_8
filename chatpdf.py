@@ -120,7 +120,8 @@ def main():
         st.write(f"Diterbitkan Oleh Pusat Perbukuan\nBadan Standar, Kurikulum, dan Asesmen Pendidikan\n"
                  f"Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi\n"
                  f"Komplek Kemdikbudristek Jalan RS. Fatmawati, Cipete, Jakarta Selatan\n"
-                 f"https://buku.kemdikbud.go.id\nDisusun Oleh Okky Fajar Tri Maryana, dkk")
+                 f"https://buku.kemdikbud.go.id\n")
+        st.write(f"**Disusun Oleh: Okky Fajar Tri Maryana, dkk**")
     else:
         st.warning("Berkas PDF kosong atau tidak dapat diproses.")
 
