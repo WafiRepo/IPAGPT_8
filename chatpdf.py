@@ -138,7 +138,7 @@ def main():
                  f"Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi\n"
                  f"Komplek Kemdikbudristek Jalan RS. Fatmawati, Cipete, Jakarta Selatan\n"
                  f"https://buku.kemdikbud.go.id")
-        st.write(f"**Disusun Oleh Okky Fajar Tri Maryana, dkk**")
+        # st.write(f"**Disusun Oleh Okky Fajar Tri Maryana, dkk**")
     else:
         st.warning("Berkas PDF kosong atau tidak dapat diproses.")
 
