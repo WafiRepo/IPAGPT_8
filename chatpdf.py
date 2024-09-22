@@ -74,9 +74,7 @@ def format_response(response):
 def get_conversational_chain():
     prompt_template = """
     Answer the question by first breaking down your reasoning step by step (using the Chain of Thought approach). 
-    Explain your thought process before arriving at the final answer. 
-    If the question involves a numerical result, formula, or equation, display the reasoning using LaTeX format 
-    for mathematical expressions, and include a detailed explanation of each symbol and step in the equation.\n\n
+    Explain your thought process before arriving at the final answer. \n\n
     Context:\n {context}\n
     Question: \n{question}\n
     Step-by-step reasoning and answer:
