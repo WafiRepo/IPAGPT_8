@@ -69,7 +69,7 @@ def get_conversational_chain():
     prompt_template = """
     Jawab pertanyaan dengan cara yang mudah dipahami, seolah-olah Anda sedang berbicara kepada seorang teman. 
     Jika pertanyaan melibatkan matematika, perhitungan, atau analisis numerik, berikan jawaban yang terstruktur dalam beberapa langkah.
-    Mulailah dengan menjelaskan Langkah 1, Langkah 2, dan seterusnya, dan jelaskan setiap langkah dengan detail yang cukup.
+    Mulailah dengan menjelaskansetiap langkah dengan detail yang cukup.
     Untuk pertanyaan lainnya, cukup berikan jawaban sederhana namun lengkap.\n\n
     Konteks:\n {context}\n
     Pertanyaan: \n{question}\n
