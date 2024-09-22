@@ -77,7 +77,7 @@ def get_conversational_chain():
     """
     
     # Create the LLM Chain
-    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3)  # Lower temperature for more logical and consistent responses
+    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.5)  # Lower temperature for more logical and consistent responses
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     
     llm_chain = LLMChain(llm=model, prompt=prompt)
