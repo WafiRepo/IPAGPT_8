@@ -68,15 +68,18 @@ def format_response(response):
 def get_conversational_chain():
     prompt_template = """
     Jawab pertanyaan dengan cara yang mudah dipahami, seolah-olah Anda sedang berbicara kepada seorang teman. 
-    Jelaskan pengertian atau konsep yang ditanyakan dengan menggunakan bahasa yang sederhana, namun tetap lengkap. 
-    Jika pertanyaan melibatkan hasil numerik, rumus, atau persamaan, berikan penjelasan yang mudah dimengerti 
-    tanpa membagi jawaban dalam langkah-langkah yang terlalu formal. Berikan penjelasan yang alami dan singkat.\n\n
+    Jika pertanyaan melibatkan matematika, perhitungan, atau analisis numerik, berikan penjelasan yang lebih detail 
+    dan langkah demi langkah mengenai bagaimana mencapai jawabannya. 
+    Jelaskan setiap langkah dengan jelas, termasuk konsep matematika di baliknya, 
+    namun tetap gunakan bahasa yang sederhana dan akrab.
+    Untuk pertanyaan lain, jelaskan secara sederhana namun lengkap.\n\n
     Konteks:\n {context}\n
     Pertanyaan: \n{question}\n
     Jawaban:
     """
     
-    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.6)
+    # Create the LLM Chain
+    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3)  # Lower temperature for more logical consistency in math problems
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     
     llm_chain = LLMChain(llm=model, prompt=prompt)
