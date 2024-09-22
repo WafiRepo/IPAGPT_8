@@ -60,19 +60,18 @@ def get_similar_docs(question):
     db = load_faiss_index()
     return db.similarity_search(question)
 
-# Automatically format all responses with LaTeX if necessary
+# Format response without using LaTeX
 def format_response(response):
-    try:
-        st.write("Description: This equation represents the relationship between the variables shown.")
-    except Exception:
-        # If LaTeX rendering fails, fallback to plain text
-        st.write(response)
+    # Just write the response directly without any LaTeX formatting
+    st.write(response)
 
 # Get conversational chain for Google Generative AI (with Chain of Thought)
 def get_conversational_chain():
     prompt_template = """
     Answer the question by first breaking down your reasoning step by step (using the Chain of Thought approach). 
-    Explain your thought process before arriving at the final answer. \n\n
+    Explain your thought process before arriving at the final answer. 
+    If the question involves a numerical result, formula, or equation, explain each step and provide a detailed explanation 
+    of each symbol and step in the equation.\n\n
     Context:\n {context}\n
     Question: \n{question}\n
     Step-by-step reasoning and answer:
@@ -132,7 +131,7 @@ def main():
         with st.spinner("Processing your request..."):
             answer = process_question(user_question)
             st.success("Response generated!")
-            format_response(answer)  # Automatically attempt LaTeX formatting for all responses
+            format_response(answer)  # Directly display response without LaTeX formatting
 
 if __name__ == "__main__":
     main()
