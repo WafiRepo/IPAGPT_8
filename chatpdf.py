@@ -62,7 +62,6 @@ def get_similar_docs(question):
 
 # Format response without using LaTeX
 def format_response(response):
-    # Just write the response directly without any LaTeX formatting
     st.write(response)
 
 # Get conversational chain for Google Generative AI (with Chain of Thought)
@@ -77,14 +76,10 @@ def get_conversational_chain():
     Langkah-langkah dan jawaban:
     """
     
-    # Create the LLM Chain
     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     
-    # Initialize the LLMChain with model and prompt
     llm_chain = LLMChain(llm=model, prompt=prompt)
-
-    # Specify the document_variable_name explicitly
     chain = StuffDocumentsChain(llm_chain=llm_chain, document_variable_name="context")
     
     return chain
@@ -120,12 +115,12 @@ def main():
     pdf_text = load_and_process_pdf(pdf_path)
 
     if pdf_text:
-        # Assume the first few lines contain the book title, adjust as necessary
-        # book_title = pdf_text.split('\n', 1)[0]
-        st.write(f"**Judul Buku: Ilmu Pengetahuan Alam \n Diterbitkan Oleh Pusat Perbukuan
-Badan Standar, Kurikulum, dan Asesmen Pendidikan
-Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi
-Komplek Kemdikbudristek Jalan RS. Fatmawati, Cipete, Jakarta Selatan https://buku.kemdikbud.go.id\n Disusun Oleh Okky Fajar Tri Maryana, dkk**")
+        # Static title of the book
+        st.write(f"**Judul Buku: Ilmu Pengetahuan Alam**")
+        st.write(f"Diterbitkan Oleh Pusat Perbukuan\nBadan Standar, Kurikulum, dan Asesmen Pendidikan\n"
+                 f"Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi\n"
+                 f"Komplek Kemdikbudristek Jalan RS. Fatmawati, Cipete, Jakarta Selatan\n"
+                 f"https://buku.kemdikbud.go.id\nDisusun Oleh Okky Fajar Tri Maryana, dkk")
     else:
         st.warning("Berkas PDF kosong atau tidak dapat diproses.")
 
