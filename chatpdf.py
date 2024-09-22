@@ -83,7 +83,7 @@ def main():
 
     # Load and process PDF once
     pdf_directory = os.path.join(os.path.dirname(__file__), "pdf_files")
-    pdf_text = load_and_process_pdf(os.path.join(pdf_directory, "sample.pdf"))
+    pdf_text = load_and_process_pdf(os.path.join(pdf_directory, "IPA-BS-KLS-VIII.pdf"))
 
     # Display part of the processed PDF text
     st.write("**Processed PDF Text (Preview):**")
