@@ -62,6 +62,7 @@ def get_similar_docs(question):
     return db.similarity_search(question)
 
 # Get conversational chain for Google Generative AI
+# Get conversational chain for Google Generative AI
 def get_conversational_chain():
     prompt_template = """
     Answer the question as detailed as possible from the provided context. 
@@ -72,7 +73,10 @@ def get_conversational_chain():
     """
     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
-    chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
+    
+    # Use StuffDocumentsChain instead of load_qa_chain
+    chain = StuffDocumentsChain(llm=model, prompt=prompt)
+    
     return chain
 
 # Generate response based on FAISS or fallback to generative model
@@ -83,12 +87,12 @@ def process_question(question):
     # If relevant documents are found, use the conversational chain
     if docs:
         chain = get_conversational_chain()
-        response = chain({"input_documents": docs, "question": question}, return_only_outputs=True)
+        # Replace __call__ with invoke
+        response = chain.invoke({"input_documents": docs, "question": question})
         return response['output_text']
     else:
         # Fallback to using a generative model if no relevant document is found
         return generate_fallback_response(question)
-
 # Fallback response if no relevant document is found
 def generate_fallback_response(question):
     # Using Google Generative AI directly to answer questions beyond the documents
