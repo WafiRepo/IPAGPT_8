@@ -133,7 +133,7 @@ def main():
     pdf_text = load_and_process_pdf(pdf_path)
 
     if pdf_text:
-        st.write(f"**Nama Kelas: Ilmu Pengetahuan Alam**")
+        st.write(f"**Nama Buku: Ilmu Pengetahuan Alam**")
         st.write(f"Diterbitkan Oleh Pusat Perbukuan\nBadan Standar, Kurikulum, dan Asesmen Pendidikan\n"
                  f"Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi\n"
                  f"Komplek Kemdikbudristek Jalan RS. Fatmawati, Cipete, Jakarta Selatan\n"
