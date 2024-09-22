@@ -93,16 +93,20 @@ def process_question(question):
         response = chain.invoke({"input_documents": docs, "question": question})
         
         if "answer is not available in the context" in response['output_text']:
-            return generate_fallback_response(question)
+            return generate_fallback_response(question)  # Switch to generative AI
         else:
             return response['output_text']
     else:
-        return generate_fallback_response(question)
+        return generate_fallback_response(question)  # If no docs found, fallback
 
 # Fallback response if no relevant document is found
 def generate_fallback_response(question):
-    response = genai.generate_text(prompt=question, model="gemini-pro")
-    return response.result
+    # Use Google Generative AI to answer questions beyond the documents
+    try:
+        response = genai.generate_text(prompt=question, model="gemini-pro")
+        return response.result
+    except Exception as e:
+        return f"Terjadi kesalahan saat memanggil Google Generative AI: {e}"
 
 # Main app logic
 def main():
@@ -115,13 +119,11 @@ def main():
     pdf_text = load_and_process_pdf(pdf_path)
 
     if pdf_text:
-        # Static title of the book
         st.write(f"**Judul Buku: Ilmu Pengetahuan Alam**")
         st.write(f"Diterbitkan Oleh Pusat Perbukuan\nBadan Standar, Kurikulum, dan Asesmen Pendidikan\n"
                  f"Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi\n"
                  f"Komplek Kemdikbudristek Jalan RS. Fatmawati, Cipete, Jakarta Selatan\n"
-                 f"https://buku.kemdikbud.go.id\n")
-        st.write(f"**Disusun Oleh: Okky Fajar Tri Maryana, dkk**")
+                 f"https://buku.kemdikbud.go.id\nDisusun Oleh Okky Fajar Tri Maryana, dkk")
     else:
         st.warning("Berkas PDF kosong atau tidak dapat diproses.")
 
