@@ -67,24 +67,22 @@ def format_response(response):
 # Get conversational chain for Google Generative AI (with Chain of Thought)
 def get_conversational_chain():
     prompt_template = """
-    Jawab pertanyaan dengan cara yang mudah dipahami, seolah-olah Anda sedang berbicara kepada seorang teman. 
-    Jelaskan pengertian atau konsep yang ditanyakan dengan menggunakan bahasa yang sederhana, namun tetap lengkap. 
-    Jika pertanyaan melibatkan hasil numerik, rumus, atau persamaan, berikan penjelasan yang mudah dimengerti 
-    tanpa membagi jawaban dalam langkah-langkah yang terlalu formal. Berikan penjelasan yang alami dan singkat.\n\n
+    Jawab pertanyaan dengan menjelaskan proses berpikir Anda langkah demi langkah (menggunakan pendekatan Chain of Thought). 
+    Jelaskan proses berpikir Anda sebelum sampai pada jawaban akhir. 
+    Jika pertanyaan melibatkan hasil numerik, rumus, atau persamaan, jelaskan setiap langkah dan berikan penjelasan terperinci 
+    tentang setiap simbol dan langkah dalam persamaan.\n\n
     Konteks:\n {context}\n
     Pertanyaan: \n{question}\n
-    Jawaban:
+    Langkah-langkah dan jawaban:
     """
     
-    # Create the LLM Chain
-    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.5)  # Adjust temperature for more creative responses
+    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     
     llm_chain = LLMChain(llm=model, prompt=prompt)
     chain = StuffDocumentsChain(llm_chain=llm_chain, document_variable_name="context")
     
     return chain
-
 
 # Generate response based on FAISS or fallback to generative model
 def process_question(question):
