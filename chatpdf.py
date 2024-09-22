@@ -1,8 +1,9 @@
 import os
+import re
 import streamlit as st
 from PyPDF2 import PdfReader
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_community.vectorstores import FAISS  # Correct FAISS import
+from langchain_community.vectorstores import FAISS
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
@@ -61,14 +62,32 @@ def get_similar_docs(question):
     db = load_faiss_index()
     return db.similarity_search(question)
 
+# Check if the response contains mathematical expressions or numbers
+def contains_math(response):
+    # Regular expression to match numbers, equations, or mathematical symbols
+    math_pattern = r'[=+\-*/^(){}\[\]\\]|[0-9]'
+    return re.search(math_pattern, response)
+
+# Automatically format response with LaTeX if mathematical content is found
+def format_response(response):
+    if contains_math(response):
+        st.latex(response)  # Render mathematical content as LaTeX
+        st.write("Description: This equation represents the relationship between the variables shown.")
+    else:
+        st.write(response)  # Render normal content as text
+
 # Get conversational chain for Google Generative AI
 def get_conversational_chain():
     prompt_template = """
     Answer the question as detailed as possible from the provided context. 
-    If the answer is not in the provided context, use generative model from gemini pro. and if the response is numerical, formula, or equation use latex result format to display, then use more description of the symbol's definition.\n {context}\n
+    If the answer is not in the provided context, use the generative model from Gemini Pro. 
+    If the response contains a numerical result, formula, or equation, display it using LaTeX format 
+    and include a detailed explanation of the symbols and their meaning.\n\n
+    Context:\n {context}\n
     Question: \n{question}\n
     Answer:
     """
+    
     # Create the LLM Chain
     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
@@ -89,7 +108,6 @@ def process_question(question):
     # If relevant documents are found, use the conversational chain
     if docs:
         chain = get_conversational_chain()
-        # Replace __call__ with invoke
         response = chain.invoke({"input_documents": docs, "question": question})
         
         # If the response contains the default prompt for no answer, fallback to generative model
@@ -132,7 +150,7 @@ def main():
         with st.spinner("Processing your request..."):
             answer = process_question(user_question)
             st.success("Response generated!")
-            st.write(f"**Answer:** {answer}")
+            format_response(answer)  # Automatically format response based on content type
 
 if __name__ == "__main__":
     main()
