@@ -87,36 +87,36 @@ def add_to_conversation(question, answer):
 def display_conversation():
     if st.session_state.conversation_history:
         for idx, entry in enumerate(st.session_state.conversation_history):
-            st.write(f"**User {idx+1}:** {entry['question']}")
-            st.write(f"**Assistant {idx+1}:** {entry['answer']}")
+            st.write(f"**Pertanyaan {idx+1}:** {entry['question']}")
+            st.write(f"**Jawaban {idx+1}:** {entry['answer']}")
 
 # Main app logic
 def main():
     st.set_page_config(page_title="Optimized Chat PDF", layout="wide")
-    st.header("Chat with PDFs using Google Generative AI")
+    st.header("ILMU PENGETAHUAN ALAM (IPA) Kelas VIII - SMPN 1 Buay Madang Timur")
 
     # Load and process PDF once, and cache results
     pdf_directory = os.path.join(os.path.dirname(__file__), "pdf_files")
     pdf_text = load_and_process_pdf(os.path.join(pdf_directory, "IPA-BS-KLS-VIII.pdf"))
 
     # Show part of the processed PDF text
-    st.write("**Processed PDF Text (Preview):**")
-    st.write(pdf_text[:500])  # Show the first 500 characters
+    # st.write("**Data Telah Diproses (Tampilkan):**")
+    # st.write(pdf_text[:500])  # Show the first 500 characters
 
     # Get user input (prompt)
-    user_question = st.text_input("Ask a Question based on the PDF")
+    user_question = st.text_input("Tanya Sesuatu")
 
     # Display conversation history
     display_conversation()
 
     # Handle user input and processing
     if user_question:
-        with st.spinner("Processing your request..."):
+        with st.spinner("Memproses Permintaan..."):
             answer = process_single_prompt(user_question)
             add_to_conversation(user_question, answer)
 
-        st.success("Response generated!")
-        st.write(f"**Assistant:** {answer}")
+        st.success("Respon Dihasilkan!")
+        st.write(f"**Jawaban:** {answer}")
 
 if __name__ == "__main__":
     main()
