@@ -112,20 +112,18 @@ def generate_fallback_response(question):
 
 # Main app logic
 def main():
-
-        # Add logo at the center top
-    logo_path = "images/SMPN1BMT logo.jpeg"  # Replace with your actual path to the logo
+    st.set_page_config(page_title="Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur", layout="wide")
+    
+    # Add logo at the center top and adjust its size
+    logo_path = "images/logo.png"  # Replace with your actual path to the logo
     st.markdown(
         f"""
-        <div style="display: flex; justify-content: center;">
-            <img src="data:image/png;base64,{st.image(logo_path, use_column_width=False)}" style="width: 12px; height: 12px;">
+        <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+            <img src="data:image/png;base64,{st.image(logo_path, use_column_width=False)}" style="width: 12px; height: auto;">
         </div>
         """,
         unsafe_allow_html=True
     )
-    st.set_page_config(page_title="Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur", layout="wide")
-    
-
 
     st.header("Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur")
 
