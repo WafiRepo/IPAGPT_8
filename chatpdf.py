@@ -68,10 +68,11 @@ def format_response(response):
 def get_conversational_chain():
     prompt_template = """
     Jawab pertanyaan dengan cara yang mudah dipahami, seolah-olah Anda sedang berbicara kepada seorang teman. 
-    Jika pertanyaan melibatkan matematika, perhitungan, atau analisis numerik, berikan penjelasan yang detail 
-    dan langkah demi langkah mengenai bagaimana mencapai jawabannya.
-    Jelaskan setiap langkah dengan jelas dan detail, termasuk konsep matematika di baliknya, 
-    namun tetap gunakan bahasa yang sederhana dan akrab.\n\n
+    Jika pertanyaan melibatkan matematika, perhitungan, atau analisis numerik, berikan penjelasan yang lebih detail 
+    dan langkah demi langkah mengenai bagaimana mencapai jawabannya. 
+    Jelaskan setiap langkah dengan jelas, termasuk konsep matematika di baliknya, 
+    namun tetap gunakan bahasa yang sederhana dan akrab.
+    Untuk pertanyaan lain, jelaskan secara sederhana namun lengkap.\n\n
     Konteks:\n {context}\n
     Pertanyaan: \n{question}\n
     Jawaban:
