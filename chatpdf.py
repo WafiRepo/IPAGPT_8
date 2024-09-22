@@ -1,15 +1,14 @@
+import os
 import streamlit as st
 from PyPDF2 import PdfReader
-import os
-import concurrent.futures
-from dotenv import load_dotenv
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain.vectorstores import FAISS
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.chains.question_answering import load_qa_chain
 from langchain.prompts import PromptTemplate
+from langchain.chains.question_answering import load_qa_chain
+from dotenv import load_dotenv
 
-# Load environment variables from .env
+# Load environment variables
 load_dotenv()
 api_key = os.getenv("GOOGLE_API_KEY")
 
@@ -20,14 +19,14 @@ if not api_key:
 import google.generativeai as genai
 genai.configure(api_key=api_key)
 
-# Cache PDF loading and processing to avoid reloading each time
+# Load PDF and Process it into text
 @st.cache_data
 def load_and_process_pdf(pdf_path, limit=5):
     text = ""
     with open(pdf_path, "rb") as f:
         pdf_reader = PdfReader(f)
         for i, page in enumerate(pdf_reader.pages):
-            if i >= limit:  # Only process the first 'limit' pages for performance
+            if i >= limit:  # Limit to first 'limit' pages
                 break
             text += page.extract_text()
     return text
@@ -36,9 +35,7 @@ def load_and_process_pdf(pdf_path, limit=5):
 @st.cache_resource
 def load_faiss_index():
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
-    # Set allow_dangerous_deserialization to True, as you trust the source
-    return FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)
-
+    return FAISS.load_local("faiss_index", embeddings)
 
 # Retrieve similar documents using FAISS vector store
 def get_similar_docs(question):
@@ -59,64 +56,47 @@ def get_conversational_chain():
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
     return chain
 
-# Process prompt and fetch response, with parallel processing
-def process_prompt_with_parallel(prompts):
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        results = list(executor.map(process_single_prompt, prompts))
-    return results
+# Generate response based on FAISS or fallback to generative model
+def process_question(question):
+    # Search for relevant documents in FAISS index
+    docs = get_similar_docs(question)
+    
+    # If relevant documents are found, use the conversational chain
+    if docs:
+        chain = get_conversational_chain()
+        response = chain({"input_documents": docs, "question": question}, return_only_outputs=True)
+        return response['output_text']
+    else:
+        # Fallback to using a generative model if no relevant document is found
+        return generate_fallback_response(question)
 
-# Function to handle single prompt
-def process_single_prompt(prompt):
-    similar_docs = get_similar_docs(prompt)
-    chain = get_conversational_chain()
-    response = chain(
-        {"input_documents": similar_docs, "question": prompt},
-        return_only_outputs=True
-    )
-    return response['output_text']
-
-# Manage session state to cache conversation history
-if 'conversation_history' not in st.session_state:
-    st.session_state.conversation_history = []
-
-# Add question and answer to session state
-def add_to_conversation(question, answer):
-    st.session_state.conversation_history.append({"question": question, "answer": answer})
-
-# Display conversation history in the app
-def display_conversation():
-    if st.session_state.conversation_history:
-        for idx, entry in enumerate(st.session_state.conversation_history):
-            st.write(f"**Pertanyaan {idx+1}:** {entry['question']}")
-            st.write(f"**Jawaban {idx+1}:** {entry['answer']}")
+# Fallback response if no relevant document is found
+def generate_fallback_response(question):
+    # Using Google Generative AI directly to answer questions beyond the documents
+    response = genai.generate_text(prompt=question, model="gemini-pro")
+    return response.result
 
 # Main app logic
 def main():
-    st.set_page_config(page_title="Optimized Chat PDF", layout="wide")
-    st.header("ILMU PENGETAHUAN ALAM (IPA) Kelas VIII - SMPN 1 Buay Madang Timur")
+    st.set_page_config(page_title="Chat PDF + Open Knowledge", layout="wide")
+    st.header("Chat with PDF + Answer Beyond the Docs")
 
-    # Load and process PDF once, and cache results
+    # Load and process PDF once
     pdf_directory = os.path.join(os.path.dirname(__file__), "pdf_files")
-    pdf_text = load_and_process_pdf(os.path.join(pdf_directory, "IPA-BS-KLS-VIII.pdf"))
+    pdf_text = load_and_process_pdf(os.path.join(pdf_directory, "sample.pdf"))
 
-    # Show part of the processed PDF text
-    # st.write("**Data Telah Diproses (Tampilkan):**")
-    # st.write(pdf_text[:500])  # Show the first 500 characters
+    # Display part of the processed PDF text
+    st.write("**Processed PDF Text (Preview):**")
+    st.write(pdf_text[:500])  # Show the first 500 characters
 
     # Get user input (prompt)
-    user_question = st.text_input("Tanya Sesuatu")
+    user_question = st.text_input("Ask a Question")
 
-    # Display conversation history
-    display_conversation()
-
-    # Handle user input and processing
     if user_question:
-        with st.spinner("Memproses Permintaan..."):
-            answer = process_single_prompt(user_question)
-            add_to_conversation(user_question, answer)
-
-        st.success("Respon Dihasilkan!")
-        st.write(f"**Jawaban:** {answer}")
+        with st.spinner("Processing your request..."):
+            answer = process_question(user_question)
+            st.success("Response generated!")
+            st.write(f"**Answer:** {answer}")
 
 if __name__ == "__main__":
     main()
