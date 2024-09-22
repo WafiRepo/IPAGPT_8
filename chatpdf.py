@@ -119,7 +119,7 @@ def main():
     st.markdown(
         f"""
         <div style="display: flex; justify-content: center;">
-            <img src="data:image/png;base64,{st.image(logo_path, use_column_width=True)}" style="width: 60px; height: auto;">
+            <img src="data:image/png;base64,{st.image(logo_path, use_column_width=True)}" style="width: 12px; height: auto;">
         </div>
         """,
         unsafe_allow_html=True
