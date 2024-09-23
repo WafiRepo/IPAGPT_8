@@ -118,14 +118,14 @@ def main():
     col1, col2 = st.columns([1, 1])
 
     logo_path_1 = "images/SMPN1BMT logo.jpeg"  # Replace with your actual path to the logo
-    logo_path_2 = "1024px-Logo_UMS_Surakarta.png"   # Replace with the second logo's path
+    logo_path_2 = "512px-Logo_UMS_Surakarta.png"   # Replace with the second logo's path
 
     # Place the logos in the respective columns with specific width
     with col1:
         st.image(logo_path_1, width=200)  # Atur ukuran gambar logo pertama
 
     with col2:
-        st.image(logo_path_2, width=100)  # Atur ukuran gambar logo kedua
+        st.image(logo_path_2, width=200)  # Atur ukuran gambar logo kedua
 
     st.header("Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur")
 
