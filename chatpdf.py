@@ -21,6 +21,9 @@ if not api_key:
 import google.generativeai as genai
 genai.configure(api_key=api_key)
 
+# Initialize a chat history list
+chat_history = []
+
 # Load PDF and process it into text
 @st.cache_data
 def load_and_process_pdf(pdf_path, limit=5):
@@ -64,22 +67,17 @@ def get_similar_docs(question):
 def format_response(response):
     st.write(response)
 
-# Get conversational chain for Google Generative AI (with Chain of Thought)
+# Get conversational chain for Google Generative AI (with chat history)
 def get_conversational_chain():
     prompt_template = """
-    Jawab pertanyaan dengan nada yang ramah dan mudah dipahami, seperti berbicara dengan seorang teman. 
-    Jika pertanyaan melibatkan matematika atau analisis numerik, berikan penjelasan langkah demi langkah 
-    yang terstruktur dengan cara yang santai namun tetap jelas.
-    Gunakan contoh nyata jika memungkinkan, dan pastikan setiap langkah dijelaskan dengan baik.
-    Untuk pertanyaan lainnya, jawab secara ringkas namun lengkap.\n\n
-    Konteks:\n {context}\n
+    {chat_history}
     Pertanyaan: \n{question}\n
-    Jawaban Terstruktur:
+    Jawaban:
     """
     
     # Create the LLM Chain
-    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.5)  # Moderate temperature for creativity and clarity
-    prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
+    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.5)
+    prompt = PromptTemplate(template=prompt_template, input_variables=["chat_history", "question"])
     
     llm_chain = LLMChain(llm=model, prompt=prompt)
     chain = StuffDocumentsChain(llm_chain=llm_chain, document_variable_name="context")
@@ -87,12 +85,16 @@ def get_conversational_chain():
     return chain
 
 # Generate response based on FAISS or fallback to generative model
-def process_question(question):
+def process_question(question, chat_history):
+    # Concatenate chat history to create the context for the current question
+    context = "\n".join(chat_history)
+    
+    # Search for relevant documents in FAISS index
     docs = get_similar_docs(question)
     
     if docs:
         chain = get_conversational_chain()
-        response = chain.invoke({"input_documents": docs, "question": question})
+        response = chain.invoke({"chat_history": context, "question": question})
         
         if "answer is not available in the context" in response['output_text']:
             return generate_fallback_response(question)  # Switch to generative AI
@@ -177,9 +179,13 @@ def main():
 
     if user_question:
         with st.spinner("Sedang memproses permintaan Anda..."):
-            answer = process_question(user_question)
+            answer = process_question(user_question, chat_history)
             st.success("Respons berhasil dihasilkan!")
             format_response(answer)
+
+            # Update chat history with the new question and answer
+            chat_history.append(f"Pertanyaan: {user_question}")
+            chat_history.append(f"Jawaban: {answer}")
 
 if __name__ == "__main__":
     main()
