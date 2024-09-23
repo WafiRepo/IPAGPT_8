@@ -116,7 +116,7 @@ def main():
     st.set_page_config(page_title="Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur", layout="wide")
 
     # Define logo paths using os.path.join for correct file paths
-    logo_path_1 = os.path.join(os.path.dirname(__file__), "images/SMPN1BMT_logo.jpeg")
+    logo_path_1 = os.path.join(os.path.dirname(__file__), "images/SMPN1BMT logo.jpeg")
     logo_path_2 = os.path.join(os.path.dirname(__file__), "images/1024px-Logo_UMS_Surakarta.png")
 
     # CSS for making images responsive
