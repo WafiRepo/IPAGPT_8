@@ -125,7 +125,7 @@ def main():
             justify-content: center;
         }
         .center-logo img {
-            width: 100%;
+            width: 50%;
             max-width: 90px; /* Adjust the max width of the logo here */
             height: auto;
         }
