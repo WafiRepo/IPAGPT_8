@@ -114,12 +114,19 @@ def generate_fallback_response(question):
 def main():
     st.set_page_config(page_title="Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur", layout="wide")
     
-    # Add logo at the center top
-    logo_path = "images/SMPN1BMT logo.jpeg"  # Replace with your actual path to the logo
+    # Add two logos side by side at the center top
+    logo_path_1 = "images/SMPN1BMT_logo.jpeg"  # Replace with your actual path to the logo
+    logo_path_2 = "images/64px-Logo_UMS_Surakarta.png"   # Replace with the second logo's path
+
     st.markdown(
         f"""
         <div style="display: flex; justify-content: center;">
-            <img src="data:image/png;base64,{st.image(logo_path, use_column_width=False)}" style="width: 12px; height: 12px;">
+            <div style="margin-right: 20px;">
+                <img src="data:image/jpeg;base64,{st.image(logo_path_1, use_column_width=False)}" style="width: 15px; height: 15px;">
+            </div>
+            <div>
+                <img src="data:image/png;base64,{st.image(logo_path_2, use_column_width=False)}" style="width: 15px; height: 15px;">
+            </div>
         </div>
         """,
         unsafe_allow_html=True
