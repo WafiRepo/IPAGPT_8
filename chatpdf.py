@@ -115,7 +115,7 @@ def main():
     st.set_page_config(page_title="Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur", layout="wide")
     
     # Add two logos side by side at the center top
-    logo_path_1 = "images/SMPN1BMT_logo.jpeg"  # Replace with your actual path to the logo
+    logo_path_1 = "images/SMPN1BMT logo.jpeg"  # Replace with your actual path to the logo
     logo_path_2 = "images/64px-Logo_UMS_Surakarta.png"   # Replace with the second logo's path
 
     st.markdown(
