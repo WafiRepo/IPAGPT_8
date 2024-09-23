@@ -114,23 +114,18 @@ def generate_fallback_response(question):
 def main():
     st.set_page_config(page_title="Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur", layout="wide")
     
-    # Add two logos side by side at the center top
+    # Create two columns for the logos
+    col1, col2 = st.columns([1, 1])
+
     logo_path_1 = "images/SMPN1BMT logo.jpeg"  # Replace with your actual path to the logo
     logo_path_2 = "images/64px-Logo_UMS_Surakarta.png"   # Replace with the second logo's path
 
-    st.markdown(
-        f"""
-        <div style="display: flex; justify-content: center;">
-            <div style="margin-right: 20px;">
-                <img src="data:image/png;base64,{st.image(logo_path_1, use_column_width=False)}" style="width: 15px; height: 15px;">
-            </div>
-            <div>
-                <img src="data:image/png;base64,{st.image(logo_path_2, use_column_width=False)}" style="width: 15px; height: 15px;">
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    # Place the logos in the respective columns
+    with col1:
+        st.image(logo_path_1, use_column_width=True)
+    
+    with col2:
+        st.image(logo_path_2, use_column_width=True)
 
     st.header("Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur")
 
@@ -145,7 +140,6 @@ def main():
                  f"Kementerian Pendidikan, Kebudayaan, Riset, dan Teknologi\n"
                  f"Komplek Kemdikbudristek Jalan RS. Fatmawati, Cipete, Jakarta Selatan\n"
                  f"https://buku.kemdikbud.go.id")
-        # st.write(f"**Disusun Oleh Okky Fajar Tri Maryana, dkk**")
     else:
         st.warning("Berkas PDF kosong atau tidak dapat diproses.")
 
