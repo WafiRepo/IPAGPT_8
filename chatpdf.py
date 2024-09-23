@@ -126,7 +126,7 @@ def main():
         }
         .center-logo img {
             width: 100%;
-            max-width: 150px; /* Adjust the max width of the logo here */
+            max-width: 90px; /* Adjust the max width of the logo here */
             height: auto;
         }
 
