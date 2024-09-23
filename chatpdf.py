@@ -123,7 +123,7 @@ def main():
         }
         .center-logo img {
             width: 100%;
-            max-width: 150px; /* Adjust the max width of the logo here */
+            max-width: 90px; /* Adjust the max width of the logo here */
             height: auto;
         }
         </style>
@@ -133,7 +133,7 @@ def main():
     st.markdown("""
         <div class="center-logo">
             <img src="images/SMPN1BMT logo.jpeg" alt="Logo SMPN1BMT" />
-            <img src="images/1024px-Logo_UMS_Surakarta.png" alt="Another Logo" />
+            <img src="images/1024px-Logo_UMS_Surakarta.png" alt="Logo_UMS_Surakarta" />
         </div>
     """, unsafe_allow_html=True)
 
