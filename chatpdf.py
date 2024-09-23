@@ -137,9 +137,9 @@ def main():
     # Display a single logo in the center
     st.markdown(f"""
         <div class="center-logo">
-            <img src="data:image/jpeg;base64"/>
+            <img src="data:image/jpeg;base64,{st.image(logo_path_1, use_column_width=False)}"/>
         </div>
-    """, unsafe_allow_html=True)
+    """, unsafe_allow_html=False)
 
     st.header("Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur")
 
