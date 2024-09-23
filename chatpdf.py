@@ -131,13 +131,14 @@ def main():
         }
 
         /* Scrollable input box for editing long text */
-        .scrollable-textbox {
+        .scrollable-textbox input {
             white-space: nowrap;
-            overflow-x: auto;
+            overflow-x: scroll;
+            display: block;
         }
         </style>
     """, unsafe_allow_html=True)
-    
+
     # Display a single logo in the center
     st.image(logo_path_1, use_column_width=False)
 
@@ -158,7 +159,21 @@ def main():
         st.warning("Berkas PDF kosong atau tidak dapat diproses.")
 
     # Single input text box for questions, with scrollable class applied
-    user_question = st.text_input("Ajukan Pertanyaan", placeholder="Ketik pertanyaan Anda di sini...", label_visibility="visible", key="scrollable-input", max_chars=200)
+    user_question = st.text_input("Ajukan Pertanyaan", placeholder="Ketik pertanyaan Anda di sini...", label_visibility="visible", key="scrollable-input")
+
+    # Apply scrollable class to input element
+    st.markdown(
+        """
+        <script>
+        const textInput = document.querySelector("input[key='scrollable-input']");
+        if (textInput) {
+            textInput.style.overflowX = "scroll";
+            textInput.style.whiteSpace = "nowrap";
+        }
+        </script>
+        """,
+        unsafe_allow_html=True
+    )
 
     if user_question:
         with st.spinner("Sedang memproses permintaan Anda..."):
