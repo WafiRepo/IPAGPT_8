@@ -111,15 +111,13 @@ def generate_fallback_response(question):
         return f"Terjadi kesalahan saat memanggil Google Generative AI: {e}"
 
 # Main app logic
-# Main app logic
-# Main app logic
 def main():
     st.set_page_config(page_title="Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur", layout="wide")
 
     # Define the path for a single logo using os.path.join
     logo_path_1 = os.path.join(os.path.dirname(__file__), "images/SMPN1BMT logo.jpeg")
 
-    # CSS for making images responsive
+    # CSS for making images responsive and centered
     st.markdown("""
         <style>
         .center-logo {
@@ -135,11 +133,7 @@ def main():
     """, unsafe_allow_html=True)
     
     # Display a single logo in the center
-    st.markdown(f"""
-        <div class="center-logo">
-            <img src="data:image/jpeg;base64,{st.image(logo_path_1, use_column_width=False)}"/>
-        </div>
-    """, unsafe_allow_html=True)
+    st.image(logo_path_1, use_column_width=False)
 
     st.header("Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur")
 
