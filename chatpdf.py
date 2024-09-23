@@ -9,6 +9,7 @@ from langchain.chains import LLMChain
 from langchain.chains.combine_documents.stuff import StuffDocumentsChain
 from dotenv import load_dotenv
 from PyPDF2.errors import PdfReadError
+import logging
 
 # Load environment variables
 load_dotenv()
@@ -70,14 +71,19 @@ def format_response(response):
 # Get conversational chain for Google Generative AI (with chat history)
 def get_conversational_chain():
     prompt_template = """
-    {chat_history}
+    Jawab pertanyaan dengan nada yang ramah dan mudah dipahami, seperti berbicara dengan seorang teman. 
+    Jika pertanyaan melibatkan matematika atau analisis numerik, berikan penjelasan langkah demi langkah 
+    yang terstruktur dengan cara yang santai namun tetap jelas.
+    Gunakan contoh nyata jika memungkinkan, dan pastikan setiap langkah dijelaskan dengan baik.
+    Untuk pertanyaan lainnya, jawab secara ringkas namun lengkap.\n\n
+    Konteks:\n {context}\n
     Pertanyaan: \n{question}\n
-    Jawaban:
+    Jawaban Terstruktur:
     """
     
     # Create the LLM Chain
     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.5)
-    prompt = PromptTemplate(template=prompt_template, input_variables=["chat_history", "question"])
+    prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     
     llm_chain = LLMChain(llm=model, prompt=prompt)
     chain = StuffDocumentsChain(llm_chain=llm_chain, document_variable_name="context")
@@ -86,15 +92,27 @@ def get_conversational_chain():
 
 # Generate response based on FAISS or fallback to generative model
 def process_question(question, chat_history):
-    # Concatenate chat history to create the context for the current question
+    # Gabungkan riwayat percakapan untuk membuat konteks
     context = "\n".join(chat_history)
     
+    # Logging untuk debugging
+    logging.debug(f"Context: {context}")
+    logging.debug(f"Question: {question}")
+    
+    # Jika context kosong, berikan default
+    if not context:
+        context = "Tidak ada konteks sebelumnya."
+
+    # Jika pertanyaan kosong, return error
+    if not question:
+        return "Pertanyaan tidak boleh kosong."
+
     # Search for relevant documents in FAISS index
     docs = get_similar_docs(question)
     
     if docs:
         chain = get_conversational_chain()
-        response = chain.invoke({"chat_history": context, "question": question})
+        response = chain.invoke({"context": context, "question": question})
         
         if "answer is not available in the context" in response['output_text']:
             return generate_fallback_response(question)  # Switch to generative AI
