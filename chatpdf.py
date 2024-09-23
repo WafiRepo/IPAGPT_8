@@ -113,19 +113,29 @@ def generate_fallback_response(question):
 # Main app logic
 def main():
     st.set_page_config(page_title="Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur", layout="wide")
+
+    # CSS for making images responsive
+    st.markdown("""
+        <style>
+        .center-logo {
+            display: flex;
+            justify-content: space-between;
+        }
+        .center-logo img {
+            width: 100%;
+            max-width: 150px; /* Adjust the max width of the logo here */
+            height: auto;
+        }
+        </style>
+    """, unsafe_allow_html=True)
     
-    # Create two columns for the logos
-    col1, col2 = st.columns([1, 1])
-
-    logo_path_1 = "images/SMPN1BMT logo.jpeg"  # Replace with your actual path to the logo
-    logo_path_2 = "images/1024px-Logo_UMS_Surakarta.png"   # Replace with the second logo's path
-
-    # Place the logos in the respective columns with specific width
-    with col1:
-        st.image(logo_path_1, width=200)  # Atur ukuran gambar logo pertama
-
-    with col2:
-        st.image(logo_path_2, width=300)  # Atur ukuran gambar logo kedua
+    # Add logos side by side
+    st.markdown("""
+        <div class="center-logo">
+            <img src="images/SMPN1BMT logo.jpeg" alt="Logo SMPN1BMT" />
+            <img src="images/1024px-Logo_UMS_Surakarta.png" alt="Another Logo" />
+        </div>
+    """, unsafe_allow_html=True)
 
     st.header("Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur")
 
@@ -143,6 +153,9 @@ def main():
     else:
         st.warning("Berkas PDF kosong atau tidak dapat diproses.")
 
+    # Make text input more responsive
+    st.text_input("Ajukan Pertanyaan", placeholder="Ketik pertanyaan Anda di sini...", label_visibility="visible")
+
     user_question = st.text_input("Ajukan Pertanyaan")
 
     if user_question:
@@ -150,6 +163,7 @@ def main():
             answer = process_question(user_question)
             st.success("Respons berhasil dihasilkan!")
             format_response(answer)
+
 
 if __name__ == "__main__":
     main()
