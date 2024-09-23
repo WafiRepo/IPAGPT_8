@@ -112,33 +112,32 @@ def generate_fallback_response(question):
 
 # Main app logic
 # Main app logic
+# Main app logic
 def main():
     st.set_page_config(page_title="Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur", layout="wide")
 
-    # Define logo paths using os.path.join for correct file paths
+    # Define the path for a single logo using os.path.join
     logo_path_1 = os.path.join(os.path.dirname(__file__), "images/SMPN1BMT logo.jpeg")
-    logo_path_2 = os.path.join(os.path.dirname(__file__), "images/1024px-Logo_UMS_Surakarta.png")
 
     # CSS for making images responsive
     st.markdown("""
         <style>
         .center-logo {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
         }
         .center-logo img {
-            width: 70%;
-            max-width: 95px; /* Adjust the max width of the logo here */
+            width: 100%;
+            max-width: 150px; /* Adjust the max width of the logo here */
             height: auto;
         }
         </style>
     """, unsafe_allow_html=True)
     
-    # Add logos side by side
+    # Display a single logo in the center
     st.markdown(f"""
         <div class="center-logo">
             <img src="data:image/jpeg;base64,{st.image(logo_path_1, use_column_width=False)}" alt="Logo SMPN1BMT" />
-            <img src="data:image/jpeg;base64,{st.image(logo_path_2, use_column_width=False)}" alt="Another Logo" />
         </div>
     """, unsafe_allow_html=True)
 
@@ -166,9 +165,6 @@ def main():
             answer = process_question(user_question)
             st.success("Respons berhasil dihasilkan!")
             format_response(answer)
-
-if __name__ == "__main__":
-    main()
 
 
 if __name__ == "__main__":
