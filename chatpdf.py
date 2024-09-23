@@ -129,6 +129,12 @@ def main():
             max-width: 150px; /* Adjust the max width of the logo here */
             height: auto;
         }
+
+        /* Scrollable input box for editing long text */
+        .scrollable-textbox {
+            white-space: nowrap;
+            overflow-x: auto;
+        }
         </style>
     """, unsafe_allow_html=True)
     
@@ -151,15 +157,14 @@ def main():
     else:
         st.warning("Berkas PDF kosong atau tidak dapat diproses.")
 
-    # Single input text box for questions
-    user_question = st.text_input("Ajukan Pertanyaan", placeholder="Ketik pertanyaan Anda di sini...", label_visibility="visible")
+    # Single input text box for questions, with scrollable class applied
+    user_question = st.text_input("Ajukan Pertanyaan", placeholder="Ketik pertanyaan Anda di sini...", label_visibility="visible", key="scrollable-input", max_chars=200)
 
     if user_question:
         with st.spinner("Sedang memproses permintaan Anda..."):
             answer = process_question(user_question)
             st.success("Respons berhasil dihasilkan!")
             format_response(answer)
-
 
 if __name__ == "__main__":
     main()
