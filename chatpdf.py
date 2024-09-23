@@ -118,7 +118,7 @@ def main():
     col1, col2 = st.columns([1, 1])
 
     logo_path_1 = "images/SMPN1BMT logo.jpeg"  # Replace with your actual path to the logo
-    logo_path_2 = "256px-Logo_UMS_Surakarta.png"   # Replace with the second logo's path
+    logo_path_2 = "images/1024px-Logo_UMS_Surakarta.png"   # Replace with the second logo's path
 
     # Place the logos in the respective columns with specific width
     with col1:
