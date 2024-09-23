@@ -137,7 +137,7 @@ def main():
     # Display a single logo in the center
     st.markdown(f"""
         <div class="center-logo">
-            <img src="data:image/jpeg;base64,{st.image(logo_path_1, use_column_width=False)}"/>
+            <img src="data:image/jpeg;base64"/>
         </div>
     """, unsafe_allow_html=True)
 
