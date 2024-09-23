@@ -139,7 +139,7 @@ def main():
         <div class="center-logo">
             <img src="data:image/jpeg;base64,{st.image(logo_path_1, use_column_width=False)}"/>
         </div>
-    """)
+    """, unsafe_allow_html=True)
 
     st.header("Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur")
 
