@@ -122,7 +122,7 @@ def main():
         f"""
         <div style="display: flex; justify-content: center;">
             <div style="margin-right: 20px;">
-                <img src="data:image/jpeg;base64,{st.image(logo_path_1, use_column_width=False)}" style="width: 15px; height: 15px;">
+                <img src="data:image/png;base64,{st.image(logo_path_1, use_column_width=False)}" style="width: 15px; height: 15px;">
             </div>
             <div>
                 <img src="data:image/png;base64,{st.image(logo_path_2, use_column_width=False)}" style="width: 15px; height: 15px;">
