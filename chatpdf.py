@@ -122,7 +122,7 @@ def main():
 
     # Place the logos in the respective columns with specific width
     with col1:
-        st.image(logo_path_1, width=150)  # Atur ukuran gambar logo pertama
+        st.image(logo_path_1, width=200)  # Atur ukuran gambar logo pertama
 
     with col2:
         st.image(logo_path_2, width=200)  # Atur ukuran gambar logo kedua
