@@ -125,7 +125,7 @@ def main():
         st.image(logo_path_1, width=200)  # Atur ukuran gambar logo pertama
 
     with col2:
-        st.image(logo_path_2, width=200)  # Atur ukuran gambar logo kedua
+        st.image(logo_path_2, width=300)  # Atur ukuran gambar logo kedua
 
     st.header("Ilmu Pengetahuan Alam (IPA) Kelas VIII - SMPN 1 Buay Madang Timur")
 
