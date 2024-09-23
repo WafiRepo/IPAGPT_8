@@ -30,7 +30,6 @@ chat_history = []
 def load_and_process_pdf(pdf_path, limit=5):
     text = ""
     try:
-        # Check if the file is empty before processing
         if os.path.getsize(pdf_path) == 0:
             st.error(f"Berkas {pdf_path} kosong.")
             return None
@@ -107,23 +106,35 @@ def process_question(question, chat_history):
     if not question:
         return "Pertanyaan tidak boleh kosong."
 
-    # Search for relevant documents in FAISS index
-    docs = get_similar_docs(question)
-    
+    # Panggil get_similar_docs hanya jika ada question
+    if question.strip():
+        docs = get_similar_docs(question)
+    else:
+        docs = []
+
+    # Check that both context and question are not empty before invoking chain
     if docs:
         chain = get_conversational_chain()
-        response = chain.invoke({"context": context, "question": question})
-        
-        if "answer is not available in the context" in response['output_text']:
-            return generate_fallback_response(question)  # Switch to generative AI
-        else:
-            return response['output_text']
+
+        try:
+            # Pastikan bahwa context dan question sudah ada
+            if "context" not in locals() or "question" not in locals():
+                raise ValueError("Missing 'context' or 'question' in input.")
+            
+            response = chain.invoke({"context": context, "question": question})
+            
+            if "answer is not available in the context" in response['output_text']:
+                return generate_fallback_response(question)  # Switch to generative AI
+            else:
+                return response['output_text']
+        except ValueError as e:
+            logging.error(f"Error processing question: {e}")
+            return f"Kesalahan: {e}"
     else:
         return generate_fallback_response(question)  # If no docs found, fallback
 
 # Fallback response if no relevant document is found
 def generate_fallback_response(question):
-    # Use Google Generative AI to answer questions beyond the documents
     try:
         response = genai.generate_text(prompt=question, model="gemini-pro")
         return response.result
